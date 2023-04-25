@@ -44,15 +44,19 @@ struct ClassLayout: ModelLayout {
     
     /// A function for destroying instance variables, used to clean up after an early return from a constructor. If null, no clean up will be performed and all ivars must be trivial
     let iVarDestroyer: UnsafeRawPointer
-    
+        
     var genericTypeOffset: Int {
-        let descriptor = description.pointee
+        if (description.pointee.hasResilientSuperclass()) {
+            return -Int(description.pointee.metadataNegativeSizeInWords)
+        }
+        
         // don't have resilient superclass
         if (0x4000 & flags) == 0 {
             return (flags & 0x800) == 0
-            ? Int(descriptor.metadataPositiveSizeInWords - descriptor.numImmediateMembers)
-            : -Int(descriptor.metadataNegativeSizeInWords)
+            ? Int(description.pointee.metadataPositiveSizeInWords - description.pointee.numImmediateMembers)
+            : -Int(description.pointee.metadataNegativeSizeInWords)
         }
         return GenenicTypeOffset.wrong
     }
+
 }

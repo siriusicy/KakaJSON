@@ -24,6 +24,7 @@ public struct Metadata {
         let name = String(describing: type)
         if name == "Swift._SwiftObject"
             || name == "NSObject"
+            || name == "RLMObjectBase"
             || name == "_TtCs12_SwiftObject" { return nil }
         
         // type judge
